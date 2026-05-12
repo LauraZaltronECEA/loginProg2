@@ -25,3 +25,14 @@ class Account:
 
         except Exception as e:
             print("Error: {}".format(e.args[0]))
+
+    #TODO --------------------------------------------
+    def ingresar_saldo(self, username): 
+        accounts = self.accountHelper.get_cuentas(username)
+
+        for account in accounts:
+            if account == "ARS":
+                print("Cuenta de pesos argentinos")
+            else:
+                print("Debes abrir una cuenta en pesos ARGENTINOS") 
+
