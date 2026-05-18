@@ -36,5 +36,5 @@ class AccountHelper:
     def get_cuentas(self, username):
         return self.dataHelper.loadUserAccounts(username)
     
-    def getCurrencies(self):
-        return self.validCurrencies
+    # def getCurrencies(self):
+    #     return self.validCurrencies
