@@ -1,10 +1,14 @@
+
 from business.LoginHelper import LoginHelper
+from presentation.account import Account
 from getpass import getpass
-from data.entitiy.User import User
+from data.entitiy.LoggedUser import LoggedUser
+
 class Login:
 
     def __init__(self):
         self.loginHelper = LoginHelper()
+        self.account = Account()
 
     def registrarUsuario(self):
         try:
@@ -16,25 +20,29 @@ class Login:
 
             self.loginHelper.checkEqPwd(pwd1,pwd2)
             self.loginHelper.prepareAndStorePwd(username,pwd1)
-
-            print("Usuario {} registrado con exito, ya puede iniciar sesion".format(username))
+            
+            if self.loginHelper.checkUserAndPwd(username, pwd1):
+                print("Usuario {} registrado con exito, ya puede iniciar sesion".format(username))  
+                self.account.cuenta_ARS_registro(username)
+                print("Cuenta en ARS creada automaticamente...")
         except Exception as e:
             print("Error: {}".format(e.args[0]))
     
     def iniciarSesion(self):
         try:
             username = input("Por favor Ingrese el nombre de usuario:\n")
-            username = self.loginHelper.sanitize(username)
 
             pwd = getpass(prompt="Ingrese el password:\n")
 
             self.loginHelper.checkUserAndPwd(username,pwd)
 
-            print("Bienvendo {}".format(username))
+            if self.loginHelper.checkUserAndPwd(username, pwd):
+                print("Bienvenido {}".format(username))
+                nombreUsuarioObjeto = LoggedUser(username)
+                return nombreUsuarioObjeto
+            else:
+                return None
 
-            nombreUsuarioObjeto = User(username)
-            
-            return  nombreUsuarioObjeto
         except ValueError as e:
             print("Error: {}".format(e.args[0]))
 

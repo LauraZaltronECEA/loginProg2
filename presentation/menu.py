@@ -14,7 +14,7 @@ class Menu:
         print("2 - Crear Usuario")
         print("0 - Salir")
         
-        op = input().lstrip().rstrip()
+        op = input().strip()
         match op:
             case '1':
                 user = self.login.iniciarSesion()
@@ -32,6 +32,7 @@ class Menu:
         print("Ingrese una Opcion")
         print("1 - Abrir Cuenta Nueva")
         print("2 - Listar Cuentas")
+        print("3 - Ingresar Pesos Argentinos")
         print("0 - Salir")
         op = input().lstrip().rstrip()
         match op:
@@ -39,6 +40,8 @@ class Menu:
                 self.account.abrir_cuenta(user.getUsername())
             case '2':
                 self.account.listar_cuentas(user.getUsername())
+            case '3':
+                self.account.ingresar_pesos_argentinos(user.getUsername())
             case '0':
                 return print("Cerrando Sesion...")
             case _:

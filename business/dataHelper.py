@@ -26,12 +26,16 @@ class DataHelper:
 
     #Serializacion y deserializacion a cuentas de usuario
     def loadUserAccounts(self, username):
-        path = f'./data/userAcc/{username}.json'
         try:
+            path = f'./data/userAcc/{username}.json'
             return self.deserialize(path)
         except FileNotFoundError:
             return {}
 
     def saveUserAccounts(self, username, data):
-        path = f'./data/userAcc/{username}.json'
-        self.serialize(data, path)
+        try:
+            path = f'./data/userAcc/{username}.json'
+            self.serialize(data, path)
+            return True
+        except Exception as e:
+            print("Error: {}".format(e.args[0]))

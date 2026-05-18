@@ -1,11 +1,12 @@
-from data.dataHelper import DataHelper
-import pycountry
+from business.dataHelper import DataHelper
+from business.APIHelper import APIHelper
 from decimal import Decimal
 
 class AccountHelper:
     def __init__(self):
         self.dataHelper = DataHelper()
-        self.validCurrencies = [currency.alpha_3 for currency in pycountry.currencies]
+        self.apiHelper = APIHelper()
+        self.validCurrencies = self.apiHelper.getSymbols()
 
     def checkCurrency(self, currency):
         currency = currency.upper().strip()
@@ -29,8 +30,11 @@ class AccountHelper:
         accounts = self.dataHelper.loadUserAccounts(username)
         if moneda in accounts:
             raise ValueError(f"Ya existe una cuenta en {moneda}")
-        accounts[moneda] = str(Decimal('0')) # TODO montos variables
+        accounts[moneda] = str(Decimal('0'))
         self.dataHelper.saveUserAccounts(username, accounts)
 
     def get_cuentas(self, username):
         return self.dataHelper.loadUserAccounts(username)
+    
+    def getCurrencies(self):
+        return self.validCurrencies

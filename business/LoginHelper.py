@@ -1,6 +1,6 @@
 import re #libreria Regular Expressions para poder limpiar el texto de entrada
 import bcrypt #libreria para hashear las passwords, es una de las mejores opciones para esto, ya que tiene un algoritmo de hashing fuerte y es fácil de usar
-from data.dataHelper import DataHelper
+from business.dataHelper import DataHelper
 
 class LoginHelper:
 
@@ -37,7 +37,7 @@ class LoginHelper:
         if hashedpwd is None:
             raise ValueError("Usuario inexistente")#No esta bueno darle tanta informacion a un posible atacante, entonces mejor poner invalido
         if bcrypt.checkpw(pwd.encode('utf-8'), hashedpwd.encode('utf-8')):
-            return "OK"
+            return True
         else:
             raise ValueError("Password Incorrecto")
     
