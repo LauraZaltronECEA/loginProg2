@@ -13,6 +13,8 @@ class Login:
     def registrarUsuario(self):
         try:
             username = input("Por favor Ingrese el nuevo nombre de usuario:\n")
+            if self.loginHelper.checkExistingUser(username):
+                raise ValueError("Nombre de usuario NO disponible, por favor elija otro")
             username = self.loginHelper.sanitize(username)
 
             pwd1 = getpass(prompt="Ingrese el password:\n")

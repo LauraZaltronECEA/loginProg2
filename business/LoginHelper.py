@@ -40,4 +40,10 @@ class LoginHelper:
             return True
         else:
             raise ValueError("Password Incorrecto")
+        
+    def checkExistingUser(self, username):
+        if self.dataHelper.getUser(username) is not None:
+            return True
+        else:
+            return False
     

@@ -36,5 +36,33 @@ class AccountHelper:
     def get_cuentas(self, username):
         return self.dataHelper.loadUserAccounts(username)
     
+    def calcTotal_CheckBalanceARS(self, foreign_currency, amount):
+        try:
+            totalAmount_exchange_ars_to_foreign = self.apiHelper.getTotalAmount_foreign_ars(foreign_currency, amount)
+            return totalAmount_exchange_ars_to_foreign
+        except Exception as e:
+             raise Exception("Error al calcular el monto total en AccountHelper: {}".format(e.args[0]))
+
+    def checkExistingAccount(self, monedaExtranjera, accounts, username):
+            
+        if monedaExtranjera not in self.apiHelper.getSymbols():
+            print("Moneda no soportada. Por favor, intente nuevamente.")
+            return False
+        elif monedaExtranjera not in accounts:
+            print("No tienes una cuenta en {}, Desea crearla? (s/n):".format(monedaExtranjera))
+            choice = input().strip().lower()
+            if choice == 's':
+                self.crear_cuenta(username, monedaExtranjera)
+                return True
+            else:
+                print("Operacion cancelada.")
+                return False
+        else:
+            return True
+        
+    def accARStoDecimal(self, accounts):
+       decimal_ars = Decimal(accounts["ARS"])
+       return decimal_ars 
+    
     # def getCurrencies(self):
     #     return self.validCurrencies

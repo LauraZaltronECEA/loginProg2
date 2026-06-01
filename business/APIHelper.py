@@ -1,3 +1,4 @@
+from decimal import Decimal
 import os
 import dotenv
 import requests
@@ -37,3 +38,27 @@ class APIHelper:
                     raise Exception("Error en la respuesta de la API: " + data.get("error", {}).get("info", ""))
             else:
                 raise Exception(f"Error al conectar con la API: {response.status_code}")
+            
+    def getAllLatestRateEUR(self):
+        url = f"{self.base_url}api/latest?access_key={self.api_key}"
+
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            if data["success"]:
+                return data["rates"]
+            else:
+                raise Exception("Error en la respuesta de la API: " + data.get("error", {}).get("info", ""))
+        else:
+            raise Exception(f"Error al conectar con la API: {response.status_code}")
+            
+    def getTotalAmount_foreign_ars(self, foreign_currency, amount):
+        # Obtener las últimas tasas de cambio en relación al euro y convertir 
+        # el monto de la moneda extranjera a ARS utilizando el euro como intermediario
+        latest_rates = self.getAllLatestRateEUR()
+        rate_foreign = latest_rates.get(foreign_currency)
+        rate_ars = latest_rates.get("ARS")
+
+        exchange_rate_ars = Decimal(str(rate_ars)) / Decimal(str(rate_foreign))
+        return amount * exchange_rate_ars
