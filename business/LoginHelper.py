@@ -21,26 +21,26 @@ class LoginHelper:
         return sanitizedText
     
     def checkEqPwd(self, pwd1, pwd2): #check Equal Passwords
-
         if pwd1 == pwd2:
             return
         else:
-            raise ValueError("Las passwords no coinciden") # le tiramos un error de valores
+            raise ValueError("Las passwords no coinciden") 
         
     def prepareAndStorePwd(self,username,pwd):
         codedPwd = pwd.encode('utf-8')
         hashedPwd = bcrypt.hashpw(codedPwd, bcrypt.gensalt())
-        self.dataHelper.addUser(username, hashedPwd.decode('utf-8'))#la password se tiene que pasar codificada en utf-8 para q json permita su serializacion
+        self.dataHelper.addUser(username, hashedPwd.decode('utf-8'))
+        #la password se tiene que pasar codificada en utf-8 para q json permita su serializacion
 
     def checkUserAndPwd(self, username, pwd):
         hashedpwd = self.dataHelper.getUser(username) 
         if hashedpwd is None:
-            raise ValueError("Usuario inexistente")#No esta bueno darle tanta informacion a un posible atacante, entonces mejor poner invalido
+            raise ValueError("Usuario invalido")
         if bcrypt.checkpw(pwd.encode('utf-8'), hashedpwd.encode('utf-8')):
             return True
         else:
             raise ValueError("Password Incorrecto")
-        
+
     def checkExistingUser(self, username):
         if self.dataHelper.getUser(username) is not None:
             return True

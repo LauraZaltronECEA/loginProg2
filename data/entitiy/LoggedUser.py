@@ -1,7 +1,7 @@
 class LoggedUser:
     _instance = None
 
-    def __new__(cls,username):
+    def __new__(cls, username):
         
         if cls._instance is None:
             cls._instance = super().__new__(cls) 

@@ -64,5 +64,14 @@ class AccountHelper:
        decimal_ars = Decimal(accounts["ARS"])
        return decimal_ars 
     
+    def checkPwd(self, username, clave):
+        hashedPwd = self.dataHelper.getHashedPwd(username)
+        if hashedPwd is None:
+            return False
+        return self.apiHelper.verify_password(clave, hashedPwd)
+        
+    def get_account_info(self, username):
+        pass
+
     # def getCurrencies(self):
     #     return self.validCurrencies

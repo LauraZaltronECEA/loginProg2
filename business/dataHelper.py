@@ -15,6 +15,13 @@ class DataHelper:
             return users[username] 
         except KeyError:#si no existe, tira KeyError
             return None
+        
+    def getHashedPwd(self, username):
+        users = self.deserialize(self.usersFile)
+        try:
+            return users[username] 
+        except KeyError:#si no existe, tira KeyError
+            return None
 
     def serialize(self,data,file):
         with open(file,"w") as f:

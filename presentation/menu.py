@@ -26,6 +26,7 @@ class Menu:
                 return print("Saliendo de la Aplicacion...")
             case _:
                 print("Opcion Incorrecta")
+                return self.menu()
             
     def menu_usuario(self, user):
         print(20*'#', "Menu de Usuario",20*'#')
@@ -39,15 +40,21 @@ class Menu:
         match op:
             case '1':
                 self.account.abrir_cuenta(user.getUsername())
+                return self.menu_usuario(user)
             case '2':
                 self.account.listar_cuentas(user.getUsername())
+                return self.menu_usuario(user)
             case '3':
                 self.account.ingresar_pesos_argentinos(user.getUsername())
+                return self.menu_usuario(user)
             case '4':
                 self.account.ingresar_moneda_extranjera(user.getUsername())
+                return self.menu_usuario(user)
             case '5':
                 self.account.consultar_saldo(user.getUsername())
+                return self.menu_usuario(user)
             case '0':
                 return print("Cerrando Sesion...")
             case _:
-                return print("Opcion Incorrecta")
+                print("Opcion Incorrecta")
+                return self.menu_usuario(user)
