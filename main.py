@@ -1,16 +1,12 @@
 import os
 import dotenv
+from data.repository_factory import RepositoryFactory
 from presentation.menu import Menu
 
 dotenv.load_dotenv()
-db_type = os.getenv("DB_TYPE", "json")
+db_type = os.getenv("DB_TYPE")
 
-if db_type == "sql":
-    from data.sql_repository import SQLRepository
-    repo = SQLRepository()
-else:
-    from data.json_repository import JsonRepository
-    repo = JsonRepository()
+repo = RepositoryFactory.create_repository(db_type)
 
 login = Menu(repo)
 login.menu()

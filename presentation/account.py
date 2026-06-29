@@ -1,6 +1,8 @@
 from decimal import Decimal
+from datetime import datetime
+import os
 from business.account_service import AccountService
-from infrastructure.export_service import ExportService
+from infrastructure.exporter_factory import ExporterFactory
 import tabulate
 
 
@@ -8,7 +10,7 @@ class Account:
 
     def __init__(self, repository):
         self.account_service = AccountService(repository)
-        self.export_service = ExportService()
+        self.exporter_factory = ExporterFactory()
 
     def abrir_cuenta(self, username):
         try:
@@ -82,7 +84,12 @@ class Account:
                 print(f"No tenes una cuenta en {filtro}.")
                 return
 
-            filepath = self.export_service.export(accounts, username, formato, filtro)
+            exporter = self.exporter_factory.create(formato)
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            ext = {"1": "csv", "2": "txt", "3": "pdf"}[formato]
+            filename = f"{username}_resumen_{timestamp}.{ext}"
+            filepath = os.path.join("data", "exports", filename)
+            exporter.export(accounts, username, filepath, filtro)
             print(f"Resumen exportado exitosamente a: {filepath}")
         except Exception as e:
             print(e)

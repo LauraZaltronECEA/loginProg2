@@ -1,0 +1,156 @@
+
+DOCUMENTACION - Aplicacion de Terminal de Compra y Venta de Moneda Extranjera
+
+1. ARQUITECTURA UTILIZADA
+
+La aplicacion sigue una arquitectura en capas con inversion de dependencias,
+garantizando el desacoplamiento entre los componentes.
+
+PRESENTACION  (presentation/)                                    
+menu.py, auth.py, account.py                                     
+Gestiona la interaccion con el usuario (entrada/salida por       
+terminal), muestra menus y captura errores de forma amigable.    
+
+|  depende de
+v
+  
+NEGOCIO  (business/)                                             
+auth_service.py, account_service.py, logged_user.py              
+Contiene la logica de negocio: registro, login, apertura de      
+cuentas, depositos, compra de monedas, calculo de cotizaciones.  
+No conoce los detalles de persistencia. Recibe el repositorio    
+por inyeccion de dependencia (Repository).                       
+
+  |  depende de
+  v
+
+DATOS  (data/)                                                   
+repository.py (ABC), json_repository.py, sql_repository.py,      
+repository_factory.py                                            
+Implementa el acceso a los datos. Expone una interfaz comun      
+(Repository) que permite intercambiar JsonRepository por         
+SQLRepository sin modificar las capas superiores.                
+|  depende de
+v
+  
+INFRAESTRUCTURA  (infrastructure/)                               
+api_service.py, exporter_factory.py                              
+Servicios externos: API de Fixer.io para cotizaciones y          
+exportacion de resumenes en CSV, TXT y PDF.                     
+
+Patrones de diseno utilizados:
+
+  - Repository (data/repository.py)
+    Abstraccion de la capa de datos. Define la interfaz que deben
+    implementar JsonRepository y SQLRepository.
+
+  - Factory Method (data/repository_factory.py, infrastructure/exporter_factory.py)
+    Centraliza la creacion de objetos. RepositoryFactory crea el
+    repositorio segun DB_TYPE. ExporterFactory crea el exportador
+    (CsvExporter, TxtExporter, PdfExporter) segun el formato elegido.
+
+  - Singleton (business/logged_user.py, infrastructure/api_service.py)
+    Garantiza una unica instancia del usuario logueado y del servicio
+    de API durante toda la ejecucion.
+
+  - Inyeccion de Dependencias (business/auth_service.py, account_service.py)
+    Los servicios de negocio reciben el repositorio por constructor,
+    lo que permite cambiar la implementacion sin modificar su codigo.
+
+
+2. INTERCAMBIO ENTRE IMPLEMENTACIONES DE PERSISTENCIA
+
+La aplicacion soporta dos metodos de persistencia intercambiables:
+
+  A. JSON (archivos):    data/users/users.json + data/userAcc/{usuario}.json
+  B. SQLite (base de datos):  data/database/database.sqlite (via SQLObject)
+
+Ambos implementan la misma interfaz Repository (data/repository.py):
+
+  - add_user(username, hashed_pwd)
+  - get_user(username)
+  - load_user_accounts(username)
+  - save_user_accounts(username, data)
+
+Para cambiar entre uno y otro solo es necesario modificar la variable
+de entorno DB_TYPE en el archivo .env:
+
+  DB_TYPE = "json"    --> Usa JsonRepository (archivos)
+  DB_TYPE = "sql"     --> Usa SQLRepository (SQLite + SQLObject)
+
+Esta decision se toma en main.py mediante RepositoryFactory:
+
+  repo = RepositoryFactory.create_repository(db_type)
+
+Ninguna linea de business/, presentation/ o infrastructure/ necesita
+modificarse para cambiar de persistencia. La inyeccion de dependencias
+hace que el repositorio llegue a todas las capas que lo necesitan.
+
+3. INSTRUCCIONES DE EJECUCION Y CONFIGURACION
+
+3.1 Requisitos
+
+  - Python 3.10 o superior
+  - Conexion a Internet (para la API de Fixer.io y para instalar
+    dependencias)
+  - Sistema operativo: Windows, Linux o macOS
+
+3.2 Instalacion
+
+  1. Clonar o descargar el repositorio.
+
+  2. Crear y activar un entorno virtual:
+
+    Terminal:
+    (Path del repositorio) > python -m venv venv
+    (Path del repositorio) >.\venv\Scripts\Activate
+
+  3. Instalar las dependencias:
+
+         pip install -r requirements.txt
+
+     requirements.txt incluye:
+       - bcrypt: hashing de contrasenas
+       - python-dotenv: lectura de variables de entorno
+       - requests: llamadas a la API de Fixer.io
+       - SQLObject: ORM para base de datos SQLite
+       - tabulate: formateo de tablas en consola
+       - fpdf2: generacion de archivos PDF
+
+3.3 Ejecucion
+
+  Desde el directorio raiz del proyecto (loginp2/):
+
+    python main.py
+
+  Menu principal:
+
+    1 - Iniciar Sesion
+    2 - Crear Usuario
+    0 - Salir
+
+  Menu de usuario (tras iniciar sesion):
+
+    1 - Abrir Cuenta Nueva
+    2 - Listar Cuentas y Saldos
+    3 - Ingresar Pesos Argentinos
+    4 - Ingresar Moneda Extranjera
+    5 - Exportar Resumen de Cuentas
+    0 - Salir
+
+  Los resumenes exportados se guardan en data/exports/ en formato
+  CSV, TXT o PDF segun la eleccion del usuario.
+
+3.4 Cambio de persistencia
+
+  Para cambiar de JSON a SQLite (o viceversa):
+
+  1. Editar .env y cambiar DB_TYPE:
+    DB_TYPE = "sql"    --> para SQLite
+    DB_TYPE = "json"   --> para JSON
+
+  2. Reiniciar la aplicacion.
+
+  NOTA: Los datos existentes en un formato NO se migran al otro.
+  Si se cambia de JSON a SQLite, la base de datos SQLite comienza
+  vacia y viceversa.

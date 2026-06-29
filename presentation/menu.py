@@ -42,7 +42,7 @@ class Menu:
                 print("3 - Ingresar Pesos Argentinos")
                 print("4 - Ingresar Moneda Extranjera")
                 print("5 - Exportar Resumen de Cuentas")
-                print("0 - Salir")
+                print("0 - Cerrar Sesion")
                 op = input().strip()
                 match op:
                     case '1':
