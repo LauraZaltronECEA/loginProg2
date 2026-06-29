@@ -1,0 +1,101 @@
+﻿PRIMERA ETAPA:
+Consideraciones
+.A partir de ahora, cada usuario tendrá su propio archivo JSON:
+
+Nombre del archivo: username.json
+Ejemplo: gferrari.json
+Estructura del archivo:
+  {
+    "USD": "100.50",
+    "ARS": "25000.00"
+  }
+
+Las keys representan códigos de moneda de 3 letras (ISO 4217).
+Los valores representan saldos.
+Los saldos deben manejarse utilizando el tipo decimal de Python
+No usar float por problemas de precisión.
+https://docs.python.org/3/library/decimal.html
+Requerimiento Funcional
+Abrir cuenta
+Implementar la funcionalidad
+
+abrir_cuenta(username, moneda)
+
+Comportamiento Esperado
+Verificar que el usuario exista (ya implementado en el login).
+Cargar (o crear si no existe) el archivo username.json.
+La moneda debe tener exactamente 3 letras.
+No debe existir previamente una cuenta en esa moneda.
+Crear la cuenta con saldo inicial en Decimal(0).
+Persistir el archivo actualizado usando sertializacion y deserializacion.
+Listar las cuentas de usuario
+Implementar la funcionalidad
+
+listar_cuentas(username)
+
+Comportamiento Esperado
+Mostrar en la pantalla las cuentas del usuaario loggeeado.
+Se debe mostrar cuenta y saldo de una manera legible, pueden usar Tabulate.
+Ejemplo
++----------+---------+
+| Moneda   |   Saldo   |
++======+===== +
+| USD         |   100.50  |
++----------+-----------+
+| ARS          | 25000.00 |
++----------+-----------+
+| EUR          |    75.25    |
++----------+-----------+
+
+SEGUNDA ETAPA (FINAL):
+Entrega Final – Aplicación de Compra y Venta de Moneda Extranjera
+Objetivo
+Extender la aplicación desarrollada en la primera etapa incorporando la funcionalidad de compra de monedas extranjeras y una nueva implementación de persistencia basada en base de datos, manteniendo la independencia entre las capas del sistema.
+
+
+Requerimientos Funcionales
+La aplicación deberá cumplir con todos los requisitos especificados en la primera entrega.
+
+
+Además, deberá incorporar las siguientes funcionalidades:
+
+
+Compra de monedas extranjeras
+Permitir la compra de monedas extranjeras utilizando las cotizaciones obtenidas desde la API de Fixer.io.
+El sistema deberá consultar las tasas de cambio vigentes para realizar las conversiones correspondientes.
+Actualización de saldos
+Luego de cada operación de compra, deberán actualizarse los saldos de las cuentas involucradas.
+En la implementación basada en archivos, los cambios deberán persistirse en los archivos serializados correspondientes a cada usuario.
+Manejo de errores
+La cuenta solicitada no existe.
+El saldo disponible es insuficiente para realizar la operación.
+Los errores deberán gestionarse mediante excepciones o mecanismos equivalentes definidos en el diseño de la aplicación.
+Requerimientos de Persistencia
+Se deberá incorporar una segunda implementación de la capa de datos que reemplace el almacenamiento basado en archivos serializados por una base de datos relacional accedida mediante el ORM SQLObject.
+
+
+Consideraciones
+La nueva capa de datos deberá ofrecer la misma interfaz pública que la implementación basada en archivos.
+Debe ser posible intercambiar una implementación por la otra sin realizar modificaciones en las capas de negocio ni de presentación.
+La lógica de negocio no deberá depender de detalles específicos de la tecnología de persistencia utilizada.
+Ambas implementaciones deberán ser completamente compatibles desde el punto de vista funcional.
+
+Entregables
+
+Código fuente completo de la aplicación.
+Implementación de persistencia basada en archivos serializados.
+Implementación de persistencia basada en base de datos utilizando SQLObject.
+
+Documentación breve que explique:
+La arquitectura utilizada.
+Cómo se realiza el intercambio entre las distintas implementaciones de persistencia.
+Instrucciones de ejecución y configuración de la aplicación.
+
+Criterios de Evaluación:
+Correcto funcionamiento de la compra de monedas.
+Integración adecuada con la API de Fixer.io.
+Persistencia correcta de los saldos.
+Manejo apropiado de errores y excepciones.
+Diseño desacoplado entre capas.
+Posibilidad de reemplazar la capa de datos sin modificar las capas de negocio y presentación.
+Calidad del diseño orientado a objetos y aplicación de principios de abstracción e inversión de dependencias.
