@@ -1,7 +1,7 @@
 from decimal import Decimal
 import bcrypt
 from data.repository import Repository
-from infrastructure.api_service import ApiService
+from data.api_service import ApiService
 
 class AccountService:
 

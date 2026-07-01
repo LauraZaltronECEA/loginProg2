@@ -2,7 +2,7 @@ from decimal import Decimal
 from datetime import datetime
 import os
 from business.account_service import AccountService
-from infrastructure.exporter_factory import ExporterFactory
+from data.exporter_factory import ExporterFactory
 import tabulate
 
 
@@ -94,7 +94,7 @@ class Account:
         except Exception as e:
             print(e)
 
-    def ingresar_moneda_extranjera(self, username):
+    def comprar_moneda_extranjera(self, username):
         try:
             accounts = self.account_service.get_accounts(username)
 
