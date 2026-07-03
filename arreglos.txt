@@ -1,0 +1,5 @@
+1W - Los textos de cambio de monedas no son claros (no se ingressa moneda extranjera) -listo
+ 
+2E Infrastructure tiene pinta de ser data, intenta meterlo ahi y solo llamarlo desde business -listo
+
+3W en el init de AccountService llamas a la api para traerte las monedas validas, eso conviene hacerlo una sola vez y guardarlo en la DB o file -listo

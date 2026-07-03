@@ -1,10 +1,14 @@
 import json
+import os
+from datetime import datetime
 from data.repository import Repository
+
 
 class JsonRepository(Repository):
 
     def __init__(self):
         self.users_file = './data/users/users.json'
+        self.symbols_file = './data/symbols/symbols.json'
 
     def add_user(self, username, hashed_pwd):
         users = self._deserialize(self.users_file)
@@ -27,6 +31,27 @@ class JsonRepository(Repository):
         self._serialize(data, path)
         return True
 
+    def save_symbols(self, symbols):
+        data = {"updated_at": datetime.now().isoformat(), "symbols": symbols}
+        os.makedirs(os.path.dirname(self.symbols_file), exist_ok=True)
+        self._serialize(data, self.symbols_file)
+        return True
+
+    def load_symbols(self):
+        try:
+            data = self._deserialize(self.symbols_file)
+            return data.get("symbols")
+        except FileNotFoundError:
+            return None
+
+    def get_symbols_updated_at(self):
+        try:
+            data = self._deserialize(self.symbols_file)
+            ts = data.get("updated_at")
+            return datetime.fromisoformat(ts) if ts else None
+        except FileNotFoundError:
+            return None
+
     def _serialize(self, data, file):
         with open(file, "w") as f:
             f.write(json.dumps(data, indent=4))
@@ -37,3 +62,4 @@ class JsonRepository(Repository):
             if not content:
                 return {}
             return json.loads(content)
+

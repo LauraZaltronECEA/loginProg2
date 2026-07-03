@@ -99,3 +99,4 @@ Manejo apropiado de errores y excepciones.
 Diseño desacoplado entre capas.
 Posibilidad de reemplazar la capa de datos sin modificar las capas de negocio y presentación.
 Calidad del diseño orientado a objetos y aplicación de principios de abstracción e inversión de dependencias.
+

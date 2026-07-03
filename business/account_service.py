@@ -1,14 +1,32 @@
 from decimal import Decimal
+from datetime import datetime, timedelta
 import bcrypt
 from data.repository import Repository
 from data.api_service import ApiService
+
+SYMBOLS_TTL = timedelta(days=30)
+
 
 class AccountService:
 
     def __init__(self, repository: Repository):
         self.repository = repository
         self.api_service = ApiService()
-        self.valid_currencies = self.api_service.get_symbols()
+        self.valid_currencies = self._load_valid_currencies()
+
+    def _load_valid_currencies(self):
+        if self.api_service.symbols:
+            return self.api_service.symbols
+        updated_at = self.repository.get_symbols_updated_at()
+        now = datetime.now()
+        if updated_at and (now - updated_at) < SYMBOLS_TTL:
+            symbols = self.repository.load_symbols()
+            if symbols:
+                self.api_service.symbols = symbols
+                return symbols
+        symbols = self.api_service.get_symbols()
+        self.repository.save_symbols(symbols)
+        return symbols
 
     def check_currency(self, currency):
         currency = currency.upper().strip()
